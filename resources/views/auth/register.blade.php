@@ -11,8 +11,6 @@
                     <form method="POST" action="{{ route('register') }}" id="userRegistrationForm">
                         @csrf
 
-
-
                         <div class="form-group row">
                             <label for="email" class="col-md-4 col-form-label text-md-right">{{ __('E-Mail Address') }}</label>
 
@@ -69,7 +67,7 @@
     <script>
 
         document.querySelector('#userRegistrationForm').addEventListener('submit', function (e) {
-          alert(111);
+
           e.preventDefault();
           axios.post(this.action, {
             'email': document.querySelector('#email').value,
