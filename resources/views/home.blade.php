@@ -4,16 +4,16 @@
 <div class="container">
     <div class="row justify-content-center">
         <div class="col-md-8">
-            <div class="card">
-                @foreach($posts as $post)
-                <div class="card-header">{{$post->title}}</div>
+            @foreach($feeds as $feed)
+                <div class="card">
+                    <div class="card-header">{{$feed->title}}</div>
 
-                <div class="card-body">
-                    {!! $post->summary !!}
+                    <div class="card-body">
+                        {!! $feed->summary !!}
+                    </div>
                 </div>
-                @endforeach
-
-            </div>
+                <hr>
+            @endforeach
         </div>
     </div>
 </div>

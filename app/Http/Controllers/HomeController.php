@@ -2,46 +2,38 @@
 
 namespace App\Http\Controllers;
 
-use App\Item;
+use App\Services\RssFeedService;
+use App\Services\WordCountService;
 use Illuminate\Http\Request;
 
 class HomeController extends Controller
 {
+    protected $wordCount;
+    protected $rssFeed;
+
     /**
      * Create a new controller instance.
      *
-     * @return void
+     * @param \App\Services\WordCountService $wordCount
+     * @param \App\Services\RssFeedService   $rssFeed
      */
-    public function __construct()
+    public function __construct(WordCountService $wordCount, RssFeedService $rssFeed)
     {
         $this->middleware('auth');
+        $this->wordCount = $wordCount;
+        $this->rssFeed   = $rssFeed;
     }
 
     /**
-     * Show the application dashboard.
-     *
-     * @return \Illuminate\Contracts\Support\Renderable
+     * @return \Illuminate\Contracts\View\Factory|\Illuminate\View\View
+     * @throws \Exception
      */
     public function index()
     {
-        $url = 'https://www.theregister.co.uk/software/headlines.atom';
-        $xml = @simplexml_load_file($url);
+        $feeds = $this->rssFeed->getRssFeed();
 
-        $allItem = [];
-        foreach ($xml->entry as $item) {
-            $post          = new Item();
-            $post->id      = (string) $item->id;
-            $post->updated = strtotime($item->updated);
-            $post->author  = (string) $item->author->name;
-            $post->title   = (string) $item->title;
-            $post->summary = (string) $item->summary;
+        $wordCountResult = $this->wordCount->getMostCountedWord($feeds);
 
-            $allItem[] = $post;
-        }
-        //dd(collect($allItem));
-
-        $posts = collect($allItem);
-
-        return view('home', compact('posts'));
+        return view('home', compact('feeds', 'wordCountResult'));
     }
 }
