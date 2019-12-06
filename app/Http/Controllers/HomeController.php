@@ -32,8 +32,8 @@ class HomeController extends Controller
     {
         $feeds = $this->rssFeed->getRssFeed();
 
-        $wordCountResult = $this->wordCount->getMostCountedWord($feeds);
+        $mostFrequentWords = $this->wordCount->getMostCountedWord($feeds);
 
-        return view('home', compact('feeds', 'wordCountResult'));
+        return view('home', compact('feeds', 'mostFrequentWords'));
     }
 }

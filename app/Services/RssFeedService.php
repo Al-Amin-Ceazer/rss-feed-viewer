@@ -31,12 +31,14 @@ class RssFeedService
 
         $allIFeeds = [];
         foreach ($xml->entry as $item) {
-            $post          = new Feed();
-            $post->id      = (string) $item->id;
-            $post->updated = strtotime($item->updated);
-            $post->author  = (string) $item->author->name;
-            $post->title   = (string) $item->title;
-            $post->summary = (string) trim($item->summary);
+            $post            = new Feed();
+            $post->id        = (string) $item->id;
+            $post->updated   = date('D M Y', strtotime($item->updated));
+            $post->author    = (string) $item->author->name;
+            $post->authorUri = (string) $item->author->uri;
+            $post->title     = (string) $item->title;
+            $post->summary   = (string) trim($item->summary);
+            $post->data      = $item->author->name . ' ' . $item->title . ' ' . trim($item->summary);
 
             $allIFeeds[] = $post;
         }

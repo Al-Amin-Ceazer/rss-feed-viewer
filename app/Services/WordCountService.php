@@ -19,7 +19,7 @@ class WordCountService
      */
     public function __construct(GetRestrictedWordAPI $wordCount)
     {
-        $this->url = 'https://en.wikipedia.org/wiki/Most_common_words_in_English';
+        $this->url       = 'https://en.wikipedia.org/wiki/Most_common_words_in_English';
         $this->wordCount = $wordCount;
     }
 
@@ -35,27 +35,19 @@ class WordCountService
         $counts = [];
         foreach ($dataArray as $value) {
             // clean the string
-            $word  = trim(preg_replace('/[\t\n\r\s]+/', ' ', strtolower(strip_tags($value->summary))));
-            $word  = str_replace('"', "", $word);
-            $words = explode(' ', str_replace('.', "", $word));
-
+            $words = $this->cleanString($value->data);
             foreach ($words as $word) {
-
-                if (!empty($word)) {
-                    $word          = preg_replace("#[^a-zA-Z-]#", "", $word);
-                    $counts[$word] += 1;
-                }
+                $word          = preg_replace("#[^a-zA-Z-]#", "", $word);
+                $counts[$word] += 1;
             }
         }
 
         // remove unwanted array element
         unset($counts[""]);
-        // remove duplicate array elements
-        $counts = array_unique($counts);
         // sort the array
         arsort($counts);
 
-        //get excluding top 50 English common words
+        //get excluded top 50 English common words
         $restrictWords = $this->wordCount->getRestrictedWordFromWiki();
 
         foreach ($counts as $key => $value) {
@@ -64,6 +56,23 @@ class WordCountService
             }
         }
 
-        return $counts;
+        $topTenWord = array_splice($counts,0,10);
+
+        return $topTenWord;
+    }
+
+    /**
+     * @param $str
+     *
+     * @return array
+     */
+    protected function cleanString($str)
+    {
+        $str     = strtolower(strip_tags($str));
+        $str     = trim(preg_replace('/[\t\n\r\s]+/', ' ', $str));
+        $str     = str_replace('"', "", $str);
+        $wordArr = explode(' ', $str);
+
+        return $wordArr;
     }
 }
